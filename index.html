@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>blog-portfolio — 블로그 &amp; 미니 웹앱</title>
+<meta name="description" content="마크다운 기반 블로그와 직접 만든 미니 웹앱을 모아두는 곳입니다.">
+<style>
+:root {
+  --bg: #ffffff;
+  --bg-soft: #f6f7f9;
+  --surface: #ffffff;
+  --border: #e3e6ea;
+  --border-strong: #cbd1d9;
+  --text: #16191d;
+  --text-soft: #5c646e;
+  --text-faint: #8b939d;
+  --accent: #2f6fed;
+  --accent-soft: #eaf1fe;
+  --radius: 12px;
+  --shadow: 0 1px 2px rgba(16, 24, 40, .05), 0 8px 24px rgba(16, 24, 40, .05);
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #101216;
+    --bg-soft: #16191f;
+    --surface: #181c22;
+    --border: #272c35;
+    --border-strong: #39404b;
+    --text: #e9ecf1;
+    --text-soft: #a3acb9;
+    --text-faint: #737d8a;
+    --accent: #6f9bff;
+    --accent-soft: #1b2540;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 8px 24px rgba(0, 0, 0, .25);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #101216;
+  --bg-soft: #16191f;
+  --surface: #181c22;
+  --border: #272c35;
+  --border-strong: #39404b;
+  --text: #e9ecf1;
+  --text-soft: #a3acb9;
+  --text-faint: #737d8a;
+  --accent: #6f9bff;
+  --accent-soft: #1b2540;
+  --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 8px 24px rgba(0, 0, 0, .25);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI",
+               "Malgun Gothic", "Apple SD Gothic Neo", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+.wrap {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* ---------- header ---------- */
+.topbar {
+  border-bottom: 1px solid var(--border);
+  background: var(--bg);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.topbar__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 56px;
+}
+.brand {
+  font-weight: 700;
+  letter-spacing: -.01em;
+  text-decoration: none;
+  color: inherit;
+  font-size: 15px;
+}
+.brand span { color: var(--accent); }
+.topnav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.topnav a {
+  text-decoration: none;
+  color: var(--text-soft);
+  font-size: 14px;
+  padding: 6px 10px;
+  border-radius: 8px;
+}
+.topnav a:hover { background: var(--bg-soft); color: var(--text); }
+
+.theme-toggle {
+  appearance: none;
+  -webkit-appearance: none;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-soft);
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  cursor: pointer;
+  font-size: 15px;
+  line-height: 1;
+  display: grid;
+  place-items: center;
+}
+.theme-toggle:hover { border-color: var(--border-strong); color: var(--text); }
+
+/* ---------- hero ---------- */
+.hero { padding: 56px 0 40px; }
+.hero h1 {
+  margin: 0 0 12px;
+  font-size: clamp(26px, 6vw, 38px);
+  line-height: 1.25;
+  letter-spacing: -.02em;
+}
+.hero p {
+  margin: 0;
+  color: var(--text-soft);
+  font-size: clamp(15px, 3.4vw, 17px);
+  max-width: 44ch;
+}
+
+/* ---------- section ---------- */
+.section { padding: 8px 0 44px; }
+.section__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+.section__head h2 {
+  margin: 0;
+  font-size: 18px;
+  letter-spacing: -.01em;
+}
+.count {
+  font-size: 13px;
+  color: var(--text-faint);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- cards ---------- */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+.card {
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color .15s ease, transform .15s ease, box-shadow .15s ease;
+}
+a.card:hover {
+  border-color: var(--border-strong);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+.card__thumb {
+  aspect-ratio: 16 / 9;
+  background: var(--bg-soft);
+  border-bottom: 1px solid var(--border);
+  display: grid;
+  place-items: center;
+  font-size: 30px;
+  color: var(--text-faint);
+}
+.card__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.card__body { padding: 14px 16px 16px; }
+.card__title {
+  margin: 0 0 6px;
+  font-size: 15px;
+  font-weight: 650;
+  letter-spacing: -.01em;
+}
+.card__desc {
+  margin: 0;
+  font-size: 14px;
+  color: var(--text-soft);
+  line-height: 1.55;
+}
+.card__tags {
+  margin-top: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.tag {
+  font-size: 11.5px;
+  color: var(--accent);
+  background: var(--accent-soft);
+  padding: 3px 8px;
+  border-radius: 999px;
+  line-height: 1.5;
+}
+
+/* ---------- empty / coming soon ---------- */
+.placeholder {
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius);
+  padding: 22px 18px;
+  text-align: center;
+}
+.placeholder__icon {
+  font-size: 24px;
+  opacity: .55;
+  line-height: 1;
+}
+.placeholder__title {
+  margin: 10px 0 4px;
+  font-size: 14.5px;
+  font-weight: 650;
+  color: var(--text-soft);
+}
+.placeholder__desc {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-faint);
+}
+.placeholder--ghost { opacity: .5; }
+
+/* ---------- footer ---------- */
+.foot {
+  border-top: 1px solid var(--border);
+  padding: 22px 0 40px;
+  color: var(--text-faint);
+  font-size: 13px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  justify-content: space-between;
+}
+.foot a { color: var(--text-soft); text-decoration: none; }
+.foot a:hover { color: var(--accent); }
+
+@media (max-width: 480px) {
+  .hero { padding: 40px 0 30px; }
+  .grid { grid-template-columns: 1fr; gap: 14px; }
+  .topnav a { padding: 6px 8px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+  a.card:hover { transform: none; }
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap topbar__inner">
+    <a class="brand" href="./">blog<span>-</span>portfolio</a>
+    <nav class="topnav">
+      <a href="#apps">웹앱</a>
+      <a href="#posts">글</a>
+      <button class="theme-toggle" id="themeToggle" type="button"
+              aria-label="라이트/다크 테마 전환">◐</button>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="hero">
+    <h1>만든 것들을 쌓아두는 곳</h1>
+    <p>마크다운으로 쓴 글과, 브라우저에서 바로 돌아가는 작은 웹앱을 모읍니다.</p>
+  </section>
+
+  <section class="section" id="apps">
+    <div class="section__head">
+      <h2>미니 웹앱</h2>
+      <span class="count" id="appsCount"></span>
+    </div>
+    <div class="grid" id="appsGrid"></div>
+  </section>
+
+  <section class="section" id="posts">
+    <div class="section__head">
+      <h2>글</h2>
+      <span class="count" id="postsCount"></span>
+    </div>
+    <div class="grid" id="postsGrid"></div>
+  </section>
+
+</main>
+
+<footer class="wrap foot">
+  <span>HTML · CSS · JavaScript로만 만듭니다.</span>
+  <a href="https://github.com/yjenius/blog-portfolio" target="_blank" rel="noopener">GitHub</a>
+</footer>
+
+<script>
+/* ---------------------------------------------------------------
+   웹앱을 추가할 때는 아래 APPS 배열에 객체를 하나 넣으면 됩니다.
+   {
+     title: "앱 이름",
+     desc:  "한 줄 설명",
+     href:  "apps/앱이름/index.html",
+     thumb: "apps/앱이름/preview.png",   // 없으면 생략 -> emoji 사용
+     emoji: "🧮",                         // thumb 없을 때 표시
+     tags:  ["JS", "계산기"]
+   }
+   글은 POSTS 배열에 같은 방식으로 추가합니다. (href: "posts/글이름.md")
+--------------------------------------------------------------- */
+var APPS = [];
+var POSTS = [];
+
+function el(tag, className, text) {
+  var node = document.createElement(tag);
+  if (className) node.className = className;
+  if (text != null) node.textContent = text;
+  return node;
+}
+
+function buildCard(item) {
+  var card = el('a', 'card');
+  card.href = item.href;
+
+  var thumb = el('div', 'card__thumb');
+  if (item.thumb) {
+    var img = el('img');
+    img.src = item.thumb;
+    img.alt = '';
+    img.loading = 'lazy';
+    thumb.appendChild(img);
+  } else {
+    thumb.textContent = item.emoji || '▨';
+  }
+  card.appendChild(thumb);
+
+  var body = el('div', 'card__body');
+  body.appendChild(el('h3', 'card__title', item.title));
+  if (item.desc) body.appendChild(el('p', 'card__desc', item.desc));
+
+  if (item.tags && item.tags.length) {
+    var tags = el('div', 'card__tags');
+    item.tags.forEach(function (t) { tags.appendChild(el('span', 'tag', t)); });
+    body.appendChild(tags);
+  }
+  card.appendChild(body);
+  return card;
+}
+
+function buildPlaceholder(icon, title, desc, ghost) {
+  var box = el('div', 'placeholder' + (ghost ? ' placeholder--ghost' : ''));
+  box.appendChild(el('div', 'placeholder__icon', icon));
+  box.appendChild(el('p', 'placeholder__title', title));
+  box.appendChild(el('p', 'placeholder__desc', desc));
+  return box;
+}
+
+function render(gridId, countId, items, empty) {
+  var grid = document.getElementById(gridId);
+  var count = document.getElementById(countId);
+  grid.textContent = '';
+
+  if (!items.length) {
+    count.textContent = 'Coming soon';
+    grid.appendChild(buildPlaceholder(empty.icon, empty.title, empty.desc, false));
+    grid.appendChild(buildPlaceholder('·', '준비 중', '여기에 다음 카드가 들어갑니다.', true));
+    return;
+  }
+
+  count.textContent = items.length + '개';
+  items.forEach(function (item) { grid.appendChild(buildCard(item)); });
+}
+
+render('appsGrid', 'appsCount', APPS, {
+  icon: '🧪',
+  title: '첫 번째 웹앱을 준비하고 있습니다',
+  desc: '만들어지는 대로 이 자리에 카드가 하나씩 쌓입니다.'
+});
+
+render('postsGrid', 'postsCount', POSTS, {
+  icon: '✍️',
+  title: '첫 글을 쓰는 중입니다',
+  desc: '마크다운으로 쓴 글이 여기에 올라옵니다.'
+});
+
+/* ---------- theme ---------- */
+(function () {
+  var root = document.documentElement;
+  var btn = document.getElementById('themeToggle');
+  var saved = null;
+
+  try { saved = localStorage.getItem('theme'); } catch (e) {}
+  if (saved === 'dark' || saved === 'light') root.setAttribute('data-theme', saved);
+
+  btn.addEventListener('click', function () {
+    var current = root.getAttribute('data-theme');
+    var isDark = current === 'dark' ||
+      (!current && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    var next = isDark ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('theme', next); } catch (e) {}
+  });
+})();
+</script>
+
+</body>
+</html>
